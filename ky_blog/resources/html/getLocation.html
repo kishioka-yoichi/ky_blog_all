@@ -1,0 +1,36 @@
+<meta name="csrf-token" content="{{ csrf_token() }}">
+{{-- 緯度・経度を保存するための非同期処理 (Ajax) --}}
+<script>
+    const saveLocation = (latitude, longitude) => {
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        
+        // LaravelのAPIエンドポイントにAjaxで送信
+        fetch('/api/location/save', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken
+            },
+            body: JSON.stringify({ lat: latitude, lng: longitude })
+        })
+        .then(response => response.json())
+        .then(data => console.log('Location saved:', data))
+        .catch(error => console.error('Error saving location:', error));
+    };
+
+    if (navigator.geolocation) {
+        navigator.log("Attempting to get location...");
+        navigator.geolocation.getCurrentPosition(
+            (pos) => {
+                // 成功したら緯度と経度を送信
+                saveLocation(pos.coords.latitude, pos.coords.longitude);
+            }, 
+            (error) => {
+                console.error('Geolocation error:', error.message);
+            },
+            { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+        );
+    } else {
+        alert('このブラウザは位置情報取得に対応していません。');
+    }
+</script>
