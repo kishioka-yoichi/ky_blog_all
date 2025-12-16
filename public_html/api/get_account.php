@@ -1,7 +1,9 @@
 <?php
+require 'api_response.php';
 require_once 'config.php';
 
 try {
+    $pdo = getDBConnection();
     $stmt = $pdo->query("SELECT id, pass, mail, name, ip, created_at, updated_at FROM accounts");
     $accounts = $stmt->fetchAll(PDO::FETCH_ASSOC);
     echo json_encode($accounts, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
