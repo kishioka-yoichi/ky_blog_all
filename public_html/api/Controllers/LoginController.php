@@ -49,7 +49,7 @@ class LoginController extends Controller {
         session()->put('mailPassCode', $code); // パスコードも
         $subject = "OMOIDay仮会員登録のご案内";
         $message = "OMOIDayからメール送信しました。\r\nサイトに戻り以下のパスコードを入力をし、会員登録を完了してください。\r\nパスコード = " . $code;
-        $headers = "From: youichipanda@ky-blog.com";
+        $headers = "From: youichipanda@gmail.com";
         mb_send_mail($mail, $subject, $message, $headers);
         return redirect('/code');
     }

@@ -22,11 +22,13 @@ $ip = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
 
 // 必須項目のチェック
 if (empty($id) || empty($pass) || empty($mail) || empty($name)) {
+    my_log(LOG_ERROR, "Required fields (ID, password, email address, name) are missing.");
     ApiResponse::sendError(
         ApiResponse::ERROR_INVALID_INPUT, 
         '必須項目（ID, パスワード, メールアドレス, 名前）が不足しています。', 
         ApiResponse::STATUS_CODE_BAD_REQUEST
     );
+    exit; 
 }
 
 // ------------------------------------------------------------------
@@ -53,22 +55,25 @@ try {
     
     // 💡 成功レスポンス（Laravelの redirect('/main') に相当する結果）
     // ユーザーIDは文字列型なので、文字列で返す
+    my_log(LOG_SUCCESS, "Login Success");
     ApiResponse::sendSuccess([
         'id' => $id,
         'isSuccess' => true
-    ], ApiResponse::STATUS_CODE_CREATED);
+    ], ApiResponse::STATUS_CODE_OK);
 
 } catch (PDOException $e) {
     // IDまたはメールアドレスの重複エラー (409 Conflict)
     if ($e->getCode() === '23000') {
+        my_log(LOG_ERROR, "That ID or email address is already registered.");
         ApiResponse::sendError(
             ApiResponse::ERROR_CONFLICT, 
             'そのIDまたはメールアドレスは既に登録されています。', 
             ApiResponse::STATUS_CODE_CONFLICT // 409 Conflict
         );
+        exit;
     }
     
-    error_log("Account Creation PDO Error: " . $e->getMessage());
+    my_log(LOG_ERROR, "Account Creation PDO Error: " . $e->getMessage());
     ApiResponse::sendError(
         ApiResponse::ERROR_DB_ERROR, 
         'データベースエラーによりアカウント作成に失敗しました。', 

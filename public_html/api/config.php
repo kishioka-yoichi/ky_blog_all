@@ -36,3 +36,22 @@ function hashPassword(string $password): string {
     // PASSWORD_DEFAULT (bcrypt) は現在推奨されている強力なハッシュアルゴリズム
     return password_hash($password, PASSWORD_DEFAULT);
 }
+
+// ログレベル用の定数
+if (!defined('LOG_SUCCESS')) {
+    define('LOG_SUCCESS', '[SUCCESS]');
+}
+if (!defined('LOG_ERROR')) {
+    define('LOG_ERROR',   '[ERROR]');
+}
+if (!defined('LOG_INFO')) {
+    define('LOG_INFO',    '[INFO]');
+}
+
+/**
+ * シンプルなログ出力関数
+ */
+function my_log($level, $message) {
+    // [SUCCESS] メッセージ という形式で出力
+    error_log($level . " " . $message);
+}

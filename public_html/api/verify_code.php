@@ -11,7 +11,9 @@ $code = $input['code'] ?? '';
 
 // 入力チェック
 if (empty($mail) || empty($code)) {
+    my_log(LOG_ERROR, "Argument is empty");
     ApiResponse::sendError('INVALID_INPUT', 'メールアドレスとコードを入力してください。', 400);
+    exit; 
 }
 
 try {
@@ -24,7 +26,9 @@ try {
     $dbCode = $stmt->fetchColumn();
 
     if (!$dbCode) {
+        my_log(LOG_ERROR, "There is no request history for the code.");
         ApiResponse::sendError('EMAIL_NOT_FOUND', 'コードの要求履歴がありません。', 404);
+        exit; 
     }
 
     // 2. コードの照合
@@ -34,10 +38,12 @@ try {
         $deleteStmt = $pdo->prepare("DELETE FROM mail_auth WHERE mail_address = ?");
         $deleteStmt->execute([$mail]);
         
+        my_log(LOG_SUCCESS, "Verify code Success");
         ApiResponse::sendSuccess(['mailAddress' => $mail, 'isVerified' => true], 200);
 
     } else {
         // 4. コード不一致
+        my_log(LOG_ERROR, "Code mismatch");
         ApiResponse::sendError(
             ApiResponse::ERROR_CODE_MISMATCH, 
             '入力されたコードが正しくありません。', 
@@ -46,7 +52,7 @@ try {
     }
 
 } catch (PDOException $e) {
-    error_log("Verrify Code Error: " . $e->getMessage()); 
+    my_log(LOG_ERROR, "Verrify Code Error: " . $e->getMessage());
     ApiResponse::sendError(
         ApiResponse::ERROR_UNCATCHABLE, 
         'データベース接続またはクエリ実行エラー', 

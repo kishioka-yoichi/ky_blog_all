@@ -22,12 +22,13 @@ $pass = $request_data['password'] ?? '';
 
 // 入力値の基本チェック
 if (empty($user_id) || empty($pass)) {
-    error_log("Input value is empty: user_id = " . $user_id . ", pass" . $pass); 
+    my_log(LOG_ERROR, "Input value is empty: user_id = " . $user_id . ", pass" . $pass);
     ApiResponse::sendError(
     ApiResponse::ERROR_USER_NOT_FOUND, 
     'ユーザーIDまたはパスワードが空', 
     ApiResponse::STATUS_CODE_BAD_REQUEST
     );
+    exit; 
 }
 
 try {
@@ -45,10 +46,12 @@ try {
         // password_verify() は安全にハッシュを検証するPHP標準関数
         // if (password_verify($pass, $user['pass'])) {
         if ($pass == $user['pass']) {
-            // 認証成功
+            // 
+            my_log(LOG_SUCCESS, "Login Success");
             ApiResponse::sendSuccess(['id' => $user['id']], ApiResponse::STATUS_CODE_OK);
         } else {
             // パスワード不一致
+            my_log(LOG_ERROR, "Password mismatch");
             ApiResponse::sendError(
                 ApiResponse::ERROR_AUTH_FAILED, 
                 'パスワード不一致', 
@@ -57,6 +60,7 @@ try {
         }
     } else {
         // ユーザーIDが見つからない
+        my_log(LOG_ERROR, "User ID not found");
         ApiResponse::sendError(
             ApiResponse::ERROR_USER_NOT_FOUND, 
             'ユーザーIDが見つからない', 
@@ -67,7 +71,7 @@ try {
 } catch (PDOException $e) {
     // データベース接続またはクエリ実行エラー
     // エラーログに出力し、ユーザーには一般的なメッセージを返す
-    error_log("Login PDO Error: " . $e->getMessage()); 
+    my_log(LOG_ERROR, "Login PDO Error: " . $e->getMessage());
     ApiResponse::sendError(
         ApiResponse::ERROR_DB_ERROR, 
         'データベース接続またはクエリ実行エラー', 
@@ -75,7 +79,7 @@ try {
     );
 } catch (Exception $e) {
     // その他の予期せぬエラー
-    error_log("Login General Error: " . $e->getMessage()); 
+    my_log(LOG_ERROR, "Login General Error: " . $e->getMessage());
     ApiResponse::sendError(
         ApiResponse::ERROR_UNCATCHABLE, 
         'データベース接続またはクエリ実行エラー', 

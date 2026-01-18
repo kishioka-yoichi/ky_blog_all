@@ -103,7 +103,7 @@ class DairyController extends Controller{
             // ... (Nominatim API呼び出しと場所の並べ替えロジックはそのまま) ...
 
             $response = Http::withHeaders([
-                'User-Agent' => 'ky-blog/1.0 (youichipanda@ky-blog.com)'
+                'User-Agent' => 'ky-blog/1.0 (youichipanda@gmail.com)'
             ])->get('https://nominatim.openstreetmap.org/reverse', [
                 'format' => 'json',
                 'lat' => $lat,
