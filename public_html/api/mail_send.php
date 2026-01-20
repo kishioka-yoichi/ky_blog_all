@@ -25,7 +25,7 @@ function sendVerificationEmail($to, $code) {
 
 // リクエストボディの解析
 $input = json_decode(file_get_contents('php://input'), true);
-$mail = $input['mailAddress'] ?? ''; // クライアントからは 'mailAddress' として受け取る
+$mail = $input['mail_address'] ?? '';
 
 if (empty($mail) || !filter_var($mail, FILTER_VALIDATE_EMAIL)) {
     my_log(LOG_ERROR, "Empty or invalid email address");
@@ -64,7 +64,7 @@ try {
     $stmt->execute([$mail, $code]);
 
     my_log(LOG_SUCCESS, "Mail Send Success");
-    ApiResponse::sendSuccess(['isSuccess' => true], ApiResponse::STATUS_CODE_OK);
+    ApiResponse::sendSuccess(['is_success' => true], ApiResponse::STATUS_CODE_OK);
 
 } catch (PDOException $e) {
     my_log(LOG_ERROR, "Mail Send Error: " . $e->getMessage());

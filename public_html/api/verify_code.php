@@ -6,13 +6,13 @@ require 'api_response.php';
 
 // リクエストボディの解析
 $input = json_decode(file_get_contents('php://input'), true);
-$mail = $input['mailAddress'] ?? '';
+$mail = $input['mail_address'] ?? '';
 $code = $input['code'] ?? '';
 
 // 入力チェック
 if (empty($mail) || empty($code)) {
     my_log(LOG_ERROR, "Argument is empty");
-    ApiResponse::sendError('INVALID_INPUT', 'メールアドレスとコードを入力してください。', 400);
+    ApiResponse::sendError('INVALID_INPUT', 'メールアドレスとコードを入力してください。', ApiResponse::STATUS_CODE_BAD_REQUEST);
     exit; 
 }
 
@@ -39,7 +39,7 @@ try {
         $deleteStmt->execute([$mail]);
         
         my_log(LOG_SUCCESS, "Verify code Success");
-        ApiResponse::sendSuccess(['mailAddress' => $mail, 'isVerified' => true], 200);
+        ApiResponse::sendSuccess(['mail_address' => $mail, 'is_verified' => true], 200);
 
     } else {
         // 4. コード不一致

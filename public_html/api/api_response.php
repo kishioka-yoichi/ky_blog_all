@@ -17,6 +17,7 @@ class ApiResponse {
     public const ERROR_INVALID_CODE = 'INVALID_CODE'; // 無効なエラーコード
     public const ERROR_MAIL_SEND_FAIL = 'MAIL_SEND_FAIL'; // メール送信失敗
     public const ERROR_CODE_MISMATCH = 'CODE_MISMATCH'; // 認証コードの不一致
+    public const ERROR_ARG_EMPTY = 'ARG_EMPTY'; // 引数が空
     public const ERROR_UNCATCHABLE = 'UNCATCHABLE'; // どれにも該当せず、補足できないエラー
 
     

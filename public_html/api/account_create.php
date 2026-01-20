@@ -58,7 +58,7 @@ try {
     my_log(LOG_SUCCESS, "Login Success");
     ApiResponse::sendSuccess([
         'id' => $id,
-        'isSuccess' => true
+        'is_success' => true
     ], ApiResponse::STATUS_CODE_OK);
 
 } catch (PDOException $e) {
